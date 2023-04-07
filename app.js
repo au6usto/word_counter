@@ -36,12 +36,12 @@ function onResult(event) {
     });
   }
   // Update the wordsListenedElement to display the listened words and their counts with highlights
-  wordsListenedElement.innerHTML = Object.entries(wordCounter)
+  wordsListenedElement.innerHTML = '<ul>' + Object.entries(wordCounter)
     .map(([word, count]) => {
       const wordDisplay = word === targetWord && count === 3 ? `<mark>${word}</mark>` : word;
-      return `${wordDisplay}: ${count}`;
+      return `<li>${wordDisplay}: ${count}</li>`;
     })
-    .join(', ');
+    .join('') + '</ul>';
 }
 
 function onError(error) {
