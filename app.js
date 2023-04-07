@@ -30,14 +30,17 @@ function onResult(event) {
     words.forEach((word) => {
       wordCounter[word] = (wordCounter[word] || 0) + 1;
       if (word === targetWord && wordCounter[word] === 3) {
-        alert(`You have said the word '${targetWord}' 3 times.`);
+        notificationSound.play();
         wordCounter[word] = 0;
       }
     });
   }
-  // Update the wordsListenedElement to display the listened words and their counts
-  wordsListenedElement.textContent = Object.entries(wordCounter)
-    .map(([word, count]) => `${word}: ${count}`)
+  // Update the wordsListenedElement to display the listened words and their counts with highlights
+  wordsListenedElement.innerHTML = Object.entries(wordCounter)
+    .map(([word, count]) => {
+      const wordDisplay = word === targetWord && count === 3 ? `<mark>${word}</mark>` : word;
+      return `${wordDisplay}: ${count}`;
+    })
     .join(', ');
 }
 
