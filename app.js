@@ -7,7 +7,7 @@ const notificationSound = document.getElementById('notificationSound');
 
 const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition || window.msSpeechRecognition)();
 recognition.lang = 'es-ES';
-recognition.interimResults = true;
+recognition.interimResults = false;
 recognition.maxAlternatives = 1;
 
 let wordCounter = {};
