@@ -1,5 +1,7 @@
 const toggleListeningButton = document.getElementById('toggleListening');
 const statusElement = document.getElementById('status');
+const wordsListenedElement = document.getElementById('wordsListened');
+const targetWordInput = document.getElementById('targetWord');
 const targetWord = 'podóloga';
 let wordCounter = {};
 
@@ -18,6 +20,11 @@ if ('webkitSpeechRecognition' in window) {
 }
 
 function onResult(event) {
+  const targetWord = targetWordInput.value.trim();
+  if (!targetWord) {
+    return;
+  }
+
   for (let i = event.resultIndex; i < event.results.length; i++) {
     const words = event.results[i][0].transcript.trim().split(/\s+/);
     words.forEach((word) => {
@@ -28,6 +35,10 @@ function onResult(event) {
       }
     });
   }
+  // Update the wordsListenedElement to display the listened words and their counts
+  wordsListenedElement.textContent = Object.entries(wordCounter)
+    .map(([word, count]) => `${word}: ${count}`)
+    .join(', ');
 }
 
 function onError(error) {
