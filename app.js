@@ -11,8 +11,10 @@ recognition.interimResults = true;
 recognition.maxAlternatives = 1;
 
 let wordCounter = {};
+let isListening = false;
 
 recognition.onstart = () => {
+  isListening = true;
   startStopButton.textContent = 'Detener';
   statusElement.textContent = 'Escuchando...';
   startStopButton.disabled = false;
@@ -28,7 +30,7 @@ recognition.onresult = (event) => {
       if (!word) {
         return;
       }
-      
+
       wordCounter[word] = (wordCounter[word] || 0) + 1;
       if (word === targetWord && wordCounter[word] === targetCount) {
         notificationSound.play();
@@ -51,17 +53,21 @@ recognition.onerror = (event) => {
 };
 
 recognition.onend = () => {
-  startStopButton.textContent = 'Comenzar';
-  statusElement.textContent = 'Reconocimiento de voz detenido.';
-  startStopButton.disabled = false;
+  if (isListening) {
+    recognition.start();
+  } else {
+    startStopButton.textContent = 'Comenzar';
+    statusElement.textContent = 'Reconocimiento de voz detenido.';
+    startStopButton.disabled = false;
+  }
 };
 
 startStopButton.addEventListener('click', () => {
-  if (recognition.start) {
-    recognition.start = null;
+  if (isListening) {
+    isListening = false;
     recognition.stop();
   } else {
-    recognition.start = recognition.stop;
+    isListening = true;
     startStopButton.disabled = true;
     recognition.start();
   }
