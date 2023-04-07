@@ -20,30 +20,36 @@ recognition.onstart = () => {
   startStopButton.disabled = false;
 };
 
+
 recognition.onresult = (event) => {
-  const targetWord = targetWordInput.value.trim();
+  const targetWord = targetWordInput.value.trim().toLowerCase();
   const targetCount = parseInt(targetCountInput.value);
 
-  for (let i = event.resultIndex; i < event.results.length; i++) {
-    const words = event.results[i][0].transcript.trim().split(/\s+/);
+  const lastResult = event.results[event.results.length - 1];
+  if (lastResult.isFinal) {
+    const words = lastResult[0].transcript.trim().split(/\s+/);
+
     words.forEach((word) => {
       if (!word) {
         return;
       }
 
+      word = word.toLowerCase();
       wordCounter[word] = (wordCounter[word] || 0) + 1;
+
       if (word === targetWord && wordCounter[word] === targetCount) {
         notificationSound.play();
         wordCounter[word] = 0;
       }
     });
+
+    wordsListenedElement.innerHTML = '<ul>' + Object.entries(wordCounter)
+      .map(([word, count]) => {
+        const wordDisplay = word === targetWord && count === targetCount - 1 ? `<mark>${word}</mark>` : word;
+        return `<li>${wordDisplay}: ${count}</li>`;
+      })
+      .join('') + '</ul>';
   }
-  wordsListenedElement.innerHTML = '<ul>' + Object.entries(wordCounter)
-    .map(([word, count]) => {
-      const wordDisplay = word === targetWord && count === targetCount - 1 ? `<mark>${word}</mark>` : word;
-      return `<li>${wordDisplay}: ${count}</li>`;
-    })
-    .join('') + '</ul>';
 };
 
 recognition.onerror = (event) => {
